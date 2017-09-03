@@ -28,4 +28,4 @@ In this project, we will use R and apply EDA(exploratory data analysis) techniqu
 The methodology is through univariate, bivariate and multivariate analysis to explore this dataset. The tool we will be using is R’s visualization package ggplot2 and linear model.
 
 #### Note -
-You can see the entire analysis [here](https://gauravansal.github.io/).
+You can see the entire analysis [here](https://gauravansal.github.io/udacity-dand-p4/).
