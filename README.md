@@ -6,10 +6,10 @@ This repository contains my work for Udacity's Data Analyst Nanodegree program.
 
 #### Projects:
 
-- *Project 0*: [Analyze Bay Area Bike Share Data](https://github.com/gauravansal/Analyze-Bay-Area-Bike-Share-Data)
-- *Project 1*: [Test a Perceptual Phenomenon](https://github.com/gauravansal/Stroop-Effect)
-- *Project 2*: [Investigate a Dataset](https://github.com/gauravansal/Investigate-a-Dataset)
-- *Project 3*: [Wrangle OpenStreetMap Data](https://github.com/gauravansal/Wrangle-OpenStreetMap-Data)
-- *Project 4*: [Explore and Summarize Data](https://github.com/gauravansal/Prosper-Loan-Dataset-EDA-with-R)
-- *Project 5*: [Identify Fraud from Enron Email](https://github.com/gauravansal/Identify-Fraud-from-Enron-dataset)
-- *Project 6*: [Make Effective Data Visualization](https://github.com/gauravansal/Data-Visualization-with-D3.js)
+- *Project 0*: [Analyze Bay Area Bike Share Data](https://github.com/gauravansal/Udacity-Data-Analyst-Nanodegree/tree/master/P0%20-%20Analyze%20Bay%20Area%20Bike%20Share%20Data)
+- *Project 1*: [Test a Perceptual Phenomenon](https://github.com/gauravansal/Udacity-Data-Analyst-Nanodegree/tree/master/P1%20-%20Test%20a%20Perceptual%20Phenomenon)
+- *Project 2*: [Investigate a Dataset](https://github.com/gauravansal/Udacity-Data-Analyst-Nanodegree/tree/master/P2%20-%20Investigate%20a%20Dataset(Titanic%20dataset))
+- *Project 3*: [Wrangle OpenStreetMap Data](https://github.com/gauravansal/Udacity-Data-Analyst-Nanodegree/tree/master/P3%20-%20Wrangle%20OpenStreetMap%20Data)
+- *Project 4*: [Explore and Summarize Data](https://github.com/gauravansal/Udacity-Data-Analyst-Nanodegree/tree/master/P4%20-%20Prosper%20Loan%20Dataset%20EDA%20with%20R)
+- *Project 5*: [Identify Fraud from Enron Email](https://github.com/gauravansal/Udacity-Data-Analyst-Nanodegree/tree/master/P5%20-%20Identify%20Fraud%20from%20Enron%20dataset)
+- *Project 6*: [Make Effective Data Visualization](https://github.com/gauravansal/Udacity-Data-Analyst-Nanodegree/tree/master/P6%20-%20Data%20Visualization%20with%20D3.js)
