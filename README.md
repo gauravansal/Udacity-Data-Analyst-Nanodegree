@@ -13,3 +13,4 @@ This repository contains my work for Udacity's Data Analyst Nanodegree program.
 - *Project 4*: [Explore and Summarize Data](https://github.com/gauravansal/Udacity-Data-Analyst-Nanodegree/tree/master/P4%20-%20Prosper%20Loan%20Dataset%20EDA%20with%20R)
 - *Project 5*: [Identify Fraud from Enron Email](https://github.com/gauravansal/Udacity-Data-Analyst-Nanodegree/tree/master/P5%20-%20Identify%20Fraud%20from%20Enron%20dataset)
 - *Project 6*: [Make Effective Data Visualization](https://github.com/gauravansal/Udacity-Data-Analyst-Nanodegree/tree/master/P6%20-%20Data%20Visualization%20with%20D3.js)
+
