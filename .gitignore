@@ -1,0 +1,11 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+
+# Jupyter Notebook / IPython Notebook
+.ipynb_checkpoints
+
+## OSM data
+*.osm

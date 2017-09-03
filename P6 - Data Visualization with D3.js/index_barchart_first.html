@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="http://d3js.org/d3.v3.min.js"></script>
+  <style> 
+  /* Set the CSS */
+  body { 
+      font: 12px Arial;
+  }
+  h1 {
+      text-align: center;
+      font: Arial;
+      font-weight: bold;
+  } 
+  .axis path,
+  .axis line {
+      fill: none;
+      stroke: black; 
+      stroke-width: 1;
+      shape-rendering: crispEdges;
+  }
+  .bar_text_element {
+      font-family: sans-serif;
+      font-size: 11px;
+      fill: white;
+      text-anchor: right;
+  }  
+  </style>
+  <script type="text/javascript">
+   function draw(prosper_data){
+
+
+      //Data type conversion
+      prosper_data.forEach(function(d) {
+           d.DebtToIncomeRatio = +d.DebtToIncomeRatio;
+           d.CreditScore_avg = +d.CreditScore_avg;
+           d.StatedMonthlyIncome = Math.round(+d.StatedMonthlyIncome*100)/100;
+           d.RevolvingCreditBalance = +d.RevolvingCreditBalance;
+           d.OpenCreditLines = +d.OpenCreditLines;
+           d.InquiriesLast6Months = +d.InquiriesLast6Months;
+           d.ProsperRating_numeric = +d.ProsperRating_numeric;
+      });
+
+
+      // Adding header to the body
+        d3.select('body')
+          .append('h1')
+          .text('Major Factors governing Prosper Rating');
+
+      // Set the dimensions of the canvas / graph
+      var margin = {top: 30, right: 20, bottom: 50, left: 50},
+          width = 960 - margin.left - margin.right,
+          height = 600 - margin.top - margin.bottom;
+
+
+      // Adds the svg canvas
+        var svg = d3.select("body")
+                    .append("svg")
+                    .attr("width", width + margin.left + margin.right)
+                    .attr("height", height + margin.top + margin.bottom);
+
+
+      //Add a group to hold the bar chart
+      var chart = svg.append("g")
+                     .attr('class', 'chart')
+                     .attr("transform", "translate(" + margin.left + "," + (margin.top -10) + ")");
+
+
+
+
+
+      //Adding a group element to chart
+      var bars = chart.append('g')
+                         .attr('class', 'bars');
+
+
+      //Defining a key function to be used while binding data 
+          function key_func(d) {
+              return d[0];
+          };
+
+
+      //Defining function draw_bar
+      function draw_bar(data_points, factor) {
+
+      // Set the X scale
+      var x_scale = d3.scale.ordinal()
+                      .rangeRoundBands([50, width - 200], .25)
+                      .domain([1,2,3,4,5,6,7]);        
+
+      // Set the Y scale
+      if(factor == 'AverageCS') {
+        var y_scale = d3.scale.linear() 
+                        .range([height, 50])
+                        .domain([0,800]);                              
+      }
+      else if(factor == 'AverageSMI') {
+        var y_scale = d3.scale.linear() 
+                        .range([height, 50])
+                        .domain([0,8000]); 
+      }
+      else if(factor == 'AverageRCB') {
+        var y_scale = d3.scale.linear() 
+                        .range([height, 50])
+                        .domain([0,13000]);         
+      }
+      else if(factor == 'AverageOCL') {
+        var y_scale = d3.scale.linear() 
+                        .range([height, 50])
+                        .domain([0,10]);        
+      }
+      else if(factor == 'AverageDTI') {
+        var y_scale = d3.scale.linear() 
+                        .range([height, 50])
+                        .domain([0,0.40]);         
+      }
+      else if(factor == 'AverageInquiries') {
+        var y_scale = d3.scale.linear() 
+                        .range([height, 50])
+                        .domain([0,2]);       
+      }
+
+      // Define the x axis
+      var xAxis = d3.svg.axis().scale(x_scale)
+                      .orient('bottom');      
+
+      // Define the y axis
+      var yAxis = d3.svg.axis().scale(y_scale)
+                      .orient('left').ticks(8);
+
+      // Removing the old X axis and adding the new X Axis
+      d3.select('.x').remove();
+
+
+      chart.append("g")
+                 .attr("class", "x axis")
+                 .attr("transform", "translate(0, " + height + ")")
+                 .call(xAxis)
+                 .append("text")
+                 .attr("class", "label")
+                 .attr("x", width - 440)
+                 .attr("y", 40)
+                 .attr('dy', '.05em')
+                 .style("text-anchor", "end")
+                 .style('font-size', '16px')
+                 .style('font-weight', 'bold')
+                 .text("Prosper Rating");
+
+
+      // Removing the old Y axis and adding the new Y Axis
+      d3.select('.y').remove();
+
+
+      var chart_y_axis = chart.append("g")
+                              .attr("class", "y axis")
+                              .attr("transform", "translate(50,0)")
+                              .call(yAxis)
+                              .append("text")
+                              .attr("class", "label")
+                              .attr("x", -225)
+                              .attr("y", -45)
+                              .attr('dy', '.05em')
+                              .attr("transform", "rotate(-90)")
+                              .style("text-anchor", "end")
+                              .style('font-size', '16px')
+                              .style('font-weight', 'bold');
+
+
+      if(factor == 'AverageCS') {
+        chart_y_axis.text("Avg. Credit Score");
+      }
+      else if(factor == 'AverageSMI') {
+        chart_y_axis.text('Avg. Monthly Income($)');
+      }
+      else if(factor == 'AverageRCB') {
+        chart_y_axis.text('Avg. Revolving credit balance($)');
+      }
+      else if(factor == 'AverageOCL') {
+        chart_y_axis.text('Avg. Open Credit Lines');
+      }
+      else if(factor == 'AverageDTI') {
+        chart_y_axis.text('Avg. Debt to Income Ratio');
+      }
+      else if(factor == 'AverageInquiries') {
+        chart_y_axis.text('Avg. Inquiries Last 6 Months');
+      }
+
+
+      // Data join
+      var bars_data = bars.selectAll("bar")
+                                .data(data_points, key_func);                          
+
+      var bars_text = bars.selectAll('text')
+                          .data(data_points, key_func);
+
+
+/*
+      // Update Selection
+      bars_data.transition()
+                  .duration(500)
+                  .attr("x", function(d) { return x_scale(d[0]); })
+                  .attr("width", x_scale.rangeBand())
+                  .attr("y", function(d) { return y_scale(d[1]); })
+                  .attr("height", function(d) { return height - y_scale(d[1]); })
+                  .style('fill', 'steelblue');
+*/
+
+/*
+      bars_text.transition()
+               .duration(500)
+               .attr('class', 'bar_text_element')
+               .attr("x", function(d) { return x_scale(d[0]) + 15;})
+               .attr("y", function(d) { return y_scale(d[1] - 40);})
+               .text(function(d) { return d[1];});
+*/
+
+      //Remoiving old bar elements and old bar text elements
+      d3.selectAll('.bar_element').remove();
+
+
+      // Enter Selection
+      bars_data.enter()
+               .append("rect")
+               .attr('id', function(d) {return d[0]})
+               .attr('class', 'bar_element')
+               .attr("x", function(d) { return x_scale(d[0]); })
+               .attr("width", x_scale.rangeBand())
+               .attr("y", function(d) { return y_scale(d[1]); })
+               .attr("height", function(d) { return (height - y_scale(d[1])); })
+               .style('fill', 'steelblue');
+
+
+
+      bars_text.enter()
+               .append('text')
+               .attr('class', 'bar_text_element')
+               .attr("x", function(d) { return x_scale(d[0]) + 15;})
+               .attr("y", function(d) { return y_scale(d[1] - 40);})
+               .text(function(d) { return d[1];});
+
+
+      }
+
+
+      //Array of factors
+      factors = ['AverageCS', 'AverageSMI', 'AverageRCB', 'AverageOCL', 'AverageDTI', 'AverageInquiries'];
+      factor_idx = 0;
+
+
+
+
+
+      //Creating an array to hold data_points 
+      var data_points;
+
+      //Defining function update_data to filter the data based on factor
+      function update_data(factor) {
+
+        if(factor == 'AverageCS') {
+          data_points = [];
+          prosper_data.forEach(function(d) {
+                data_points.push([+d.ProsperRating_numeric, Math.round(+d.AverageCS*100)/100]);
+          });       
+        }
+        else if(factor == 'AverageSMI') {
+          data_points = [];
+          prosper_data.forEach(function(d) {
+                data_points.push([+d.ProsperRating_numeric, Math.round(+d.AverageSMI*100)/100]);
+          });
+        }
+        else if(factor == 'AverageRCB') {
+          data_points = [];
+          prosper_data.forEach(function(d) {
+                data_points.push([+d.ProsperRating_numeric, Math.round(+d.AverageRCB*100)/100]);
+          });
+        }
+        else if(factor == 'AverageOCL') {
+          data_points = [];
+          prosper_data.forEach(function(d) {
+                data_points.push([+d.ProsperRating_numeric, Math.round(+d.AverageOCL*100)/100]);
+          });
+        }
+        else if(factor == 'AverageDTI') {
+          data_points = [];
+          prosper_data.forEach(function(d) {
+                data_points.push([+d.ProsperRating_numeric, Math.round(+d.AverageDTI*100)/100]);
+          });
+        }
+        else if(factor == 'AverageInquiries') {
+          data_points = [];
+          prosper_data.forEach(function(d) {
+                data_points.push([+d.ProsperRating_numeric, Math.round(+d.AverageInquiries*100)/100]);
+          });
+        }
+      };  
+
+     
+
+
+
+
+
+      //Looping through factors
+
+      var factor_interval = setInterval(function() {
+          update_data(factors[factor_idx]);
+
+          draw_bar(data_points, factors[factor_idx]);
+          debugger; 
+          factor_idx++;
+
+          if(factor_idx >= factors.length) {
+              clearInterval(factor_interval);
+          };           
+      
+
+
+
+
+      },1500);
+
+
+
+
+
+      
+
+
+
+
+
+
+
+
+   };
+  </script>
+</head>
+<body>
+  <script type="text/javascript">
+  /* Use D3 to load the tsv file */
+
+d3.tsv("bar_chart_prosper_selected_variables_outliers_removed.tsv", draw);
+  </script>
+</body>
+</html>

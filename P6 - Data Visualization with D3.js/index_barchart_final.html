@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="http://d3js.org/d3.v3.min.js"></script>
+  <style> 
+  /* Set the CSS */
+  body { 
+      font: 12px Arial;
+  }
+  h1 {
+      text-align: center;
+      font: Arial;
+      font-weight: bold;
+  } 
+  .axis path,
+  .axis line {
+      fill: none;
+      stroke: black; 
+      stroke-width: 1;
+      shape-rendering: crispEdges;
+  }
+  .bar_text_element {
+      font-family: sans-serif;
+      font-size: 11px;
+      fill: white;
+      text-anchor: right;
+  }
+  .svg_header_text {
+      font: Arial;
+      font-size: 18px;
+      fill: grey;
+      font-weight: bold;
+  }
+  #dropdown_list {
+      position: relative;
+      bottom: 550px;
+      left: 850px;
+      width: 200px;
+      text-align: center;
+      font-size: 16px;
+  }
+  #factors_dropdown {
+      position: relative;
+      top: 40px;
+      left: 0px;
+  }
+  .factors_dropdown_header {
+      position: relative;
+      left: 28px;
+      font-size: 16px;
+      font-weight: bold;
+  }
+  #update_button {
+      position: relative;
+      top: 50px;
+      right: 20px;   
+  }
+  #note {
+      position: relative;
+      top: 60px;
+      right: 20px;
+      width: 600px ;
+      height: auto;
+      padding-left: 10px;
+      padding-right: 20px;
+      text-align: justify;
+      font: 12px sans-serif;
+      font-weight: bold;
+  }          
+  </style>
+  <script type="text/javascript">
+   function draw(prosper_data){
+
+
+      //Data type conversion
+      prosper_data.forEach(function(d) {
+           d.AverageDTI = Math.round(+d.AverageDTI*100)/100;
+           d.AverageCS = Math.round(+d.AverageCS*100)/100;
+           d.AverageSMI = Math.round(+d.AverageSMI*100)/100;
+           d.AverageRCB = Math.round(+d.AverageRCB*100)/100;
+           d.AverageOCL = Math.round(+d.AverageOCL*100)/100;
+           d.AverageInquiries = Math.round(+d.AverageInquiries*100)/100;
+           d.ProsperRating_numeric = +d.ProsperRating_numeric;
+      });
+
+
+      // Adding header to the body
+        d3.select('body')
+          .append('h1')
+          .text('Major Factors governing Prosper Rating');
+
+      // Set the dimensions of the canvas / graph
+      var margin = {top: 30, right: 20, bottom: 50, left: 50},
+          width = 960 - margin.left - margin.right,
+          height = 600 - margin.top - margin.bottom;
+
+
+      // Adds the svg canvas
+        var svg = d3.select("body")
+                    .append("svg")
+                    .attr("width", width + margin.left + margin.right)
+                    .attr("height", height + margin.top + margin.bottom);
+
+
+      //Add a group to hold the bar chart
+      var chart = svg.append("g")
+                     .attr('class', 'chart')
+                     .attr("transform", "translate(" + margin.left + "," + (margin.top -10) + ")");
+
+
+      //Adding a group element to chart
+      var bars = chart.append('g')
+                         .attr('class', 'bars');
+
+      //Defining a key function to be used while binding data 
+          function key_func(d) {
+              return d.ProsperRating_numeric;
+          };
+
+
+      //Defining function draw_bar
+      function draw_bar(prosper_data, factor) {
+
+      // Set the X scale
+      var x_scale = d3.scale.ordinal()
+                      .rangeRoundBands([50, width - 200], .25)
+                      .domain([1,2,3,4,5,6,7]);        
+
+      // Set the Y scale
+      if(factor == 'AverageCS') {
+        var y_scale = d3.scale.linear() 
+                        .range([height, 50])
+                        .domain([0,800]);                              
+      }
+      else if(factor == 'AverageSMI') {
+        var y_scale = d3.scale.linear() 
+                        .range([height, 50])
+                        .domain([0,8000]); 
+      }
+      else if(factor == 'AverageRCB') {
+        var y_scale = d3.scale.linear() 
+                        .range([height, 50])
+                        .domain([0,14000]);         
+      }
+      else if(factor == 'AverageOCL') {
+        var y_scale = d3.scale.linear() 
+                        .range([height, 50])
+                        .domain([0,10]);        
+      }
+      else if(factor == 'AverageDTI') {
+        var y_scale = d3.scale.linear() 
+                        .range([height, 50])
+                        .domain([0,0.40]);         
+      }
+      else if(factor == 'AverageInquiries') {
+        var y_scale = d3.scale.linear() 
+                        .range([height, 50])
+                        .domain([0,2]);       
+      }
+
+      // Define the x axis
+      var xAxis = d3.svg.axis().scale(x_scale)
+                      .orient('bottom');      
+
+      // Define the y axis
+      var yAxis = d3.svg.axis().scale(y_scale)
+                      .orient('left');
+
+      // Removing the old X axis and adding the new X Axis with label
+      d3.select('.x').remove();
+
+      chart.append("g")
+                 .attr("class", "x axis")
+                 .attr("transform", "translate(0, " + height + ")")
+                 .call(xAxis)
+                 .append("text")
+                 .attr("class", "label")
+                 .attr("x", width - 480)
+                 .attr("y", 40)
+                 .attr('dy', '.05em')
+                 .style("text-anchor", "end")
+                 .style('font-size', '16px')
+                 .style('font-weight', 'bold')
+                 .text("Prosper Rating");
+
+
+      // Removing the old Y axis and adding the new Y Axis with label
+      d3.select('.y').remove();
+
+      var chart_y_axis = chart.append("g")
+                              .attr("class", "y axis")
+                              .attr("transform", "translate(50,0)")
+                              .call(yAxis)
+                              .append("text")
+                              .attr("class", "label")
+                              .attr("x", -200)
+                              .attr("y", -45)
+                              .attr('dy', '.05em')
+                              .attr("transform", "rotate(-90)")
+                              .style("text-anchor", "end")
+                              .style('font-size', '16px')
+                              .style('font-weight', 'bold');
+
+
+      if(factor == 'AverageCS') {
+        chart_y_axis.text("Avg. Credit Score");
+      }
+      else if(factor == 'AverageSMI') {
+        chart_y_axis.text('Avg. Monthly Income ($)');
+      }
+      else if(factor == 'AverageRCB') {
+        chart_y_axis.text('Avg. Revolving credit balance ($)');
+      }
+      else if(factor == 'AverageOCL') {
+        chart_y_axis.text('Avg. Open Credit Lines');
+      }
+      else if(factor == 'AverageDTI') {
+        chart_y_axis.text('Avg. Debt to Income Ratio');
+      }
+      else if(factor == 'AverageInquiries') {
+        chart_y_axis.text('Avg. Inquiries Last 6 Months');
+      }
+
+
+      //Removing the old header text and adding the new header text
+      d3.select('.svg_header_text').remove();
+
+      var svg_header_text = svg.append('text')
+                               .attr('class', 'svg_header_text')
+                               .attr('x', width/2 - 250)
+                               .attr('y', 25);
+
+      if(factor == 'AverageCS') {
+        svg_header_text.text("Effects of Credit Score on Prosper Rating");
+      }
+      else if(factor == 'AverageSMI') {
+        svg_header_text.text('Effects of Monthly Income on Prosper Rating');
+      }
+      else if(factor == 'AverageRCB') {
+        svg_header_text.text('Effects of Revolving Credit Balance on Prosper Rating');
+      }
+      else if(factor == 'AverageOCL') {
+        svg_header_text.text('Effects of Open Credit Lines on Prosper Rating');
+      }
+      else if(factor == 'AverageDTI') {
+        svg_header_text.text('Effects of Debt to Income Ratio on Prosper Rating');
+      }
+      else if(factor == 'AverageInquiries') {
+        svg_header_text.text('Effects of Inquiries Last 6 Months on Prosper Rating');
+      }     
+
+
+      //Removing old bar elements
+      d3.selectAll('.bar_element').remove();
+
+
+      // Data join for bars
+      bars.selectAll('bar')
+          .data(prosper_data, key_func)
+          .enter()
+          .append("rect")
+          .attr('id', function(d) {return d.ProsperRating_numeric})
+          .attr('class', 'bar_element')
+          .attr("x", function(d) { return x_scale(d.ProsperRating_numeric); })               
+          .attr("width", x_scale.rangeBand())
+          .attr("y", function(d) { return y_scale(d[factor]); })
+          .attr("height", function(d) { return (height - y_scale(d[factor])); })
+          .style('fill', 'steelblue');
+
+          
+      //Removing old bar text elements
+      d3.selectAll('.bar_text_element').remove();
+
+
+      // Data join for bars_text
+      var bars_text = bars.selectAll('text')
+                         .data(prosper_data, key_func)
+                         .enter()
+                         .append('text')
+                         .attr('class', 'bar_text_element');
+
+
+
+      if(factor == 'AverageCS') {
+        bars_text.text(function(d) { return d[factor];})               
+                 .attr("x", function(d) { return x_scale(d.ProsperRating_numeric) + 15;})
+                 .attr("y", function(d) { return y_scale(d[factor] - 40);});
+      }
+      else if(factor == 'AverageSMI') {
+        bars_text.text(function(d) { return d[factor] + ' $';})               
+                 .attr("x", function(d) { return x_scale(d.ProsperRating_numeric) + 12;})
+                 .attr("y", function(d) { return y_scale(d[factor] - 400);});
+      }
+      else if(factor == 'AverageRCB') {
+        bars_text.text(function(d) { return d[factor] + ' $';})               
+                 .attr("x", function(d) { return x_scale(d.ProsperRating_numeric) + 6;})
+                 .attr("y", function(d) { return y_scale(d[factor] - 700);});
+      }
+      else if(factor == 'AverageOCL') {
+        bars_text.text(function(d) { return d[factor];})               
+                 .attr("x", function(d) { return x_scale(d.ProsperRating_numeric) + 18;})
+                 .attr("y", function(d) { return y_scale(d[factor] - 0.5);});
+      }
+      else if(factor == 'AverageDTI') {
+        bars_text.text(function(d) { return d[factor];})               
+                 .attr("x", function(d) { return x_scale(d.ProsperRating_numeric) + 18;})
+                 .attr("y", function(d) { return y_scale(d[factor] - 0.02);});
+      }
+      else if(factor == 'AverageInquiries') {
+        bars_text.text(function(d) { return d[factor];})               
+                 .attr("x", function(d) { return x_scale(d.ProsperRating_numeric) + 18;})
+                 .attr("y", function(d) { return y_scale(d[factor] - 0.1);});
+      }          
+
+      }
+
+
+      //Array of factors
+      factors = ['AverageCS', 'AverageSMI', 'AverageRCB', 'AverageOCL', 'AverageDTI', 'AverageInquiries'];
+      factor_idx = 0;
+
+      // Creating a set which contains all factors
+      var factors_dropdown = d3.set();
+      factors_dropdown.add('Credit_Score');
+      factors_dropdown.add('Monthly_Income');
+      factors_dropdown.add('Revolving_Credit_Balance');
+      factors_dropdown.add('Open_Credit_Lines');
+      factors_dropdown.add('Debt_to_Income_Ratio');
+      factors_dropdown.add('Inquiries_Last_6_Months');
+
+
+      //Looping through factors
+
+      var factor_interval = setInterval(function() {
+
+          draw_bar(prosper_data, factors[factor_idx]);
+
+//          debugger;
+
+          factor_idx++;
+
+          if(factor_idx >= factors.length) {
+              clearInterval(factor_interval);
+
+              // Creating div tag for holding the dropdown list for factors
+              var dropdown_list = d3.select('body')
+                                    .append('div')
+                                    .attr('id', 'dropdown_list')
+                                    .text('Select Factor & then click Update');
+
+
+              // Creating dropdown list for fcators
+              dropdown_list.append('select')
+                           .attr('id', 'factors_dropdown')
+                           .selectAll('option')
+                           .data(factors_dropdown.values())
+                           .enter()
+                           .append('option')
+                           .attr('id', function(d) {
+                                        return d;
+                            })
+                           .attr('label', function(d) {
+                                          return d;
+                            })
+                           .attr('value', function(d) {
+                                          return d;
+                            });
+
+
+              // Setting the default value of factors dropdown list to 'Inquiries Last 6 Months'
+              d3.select('#factors_dropdown #Inquiries_Last_6_Months')
+                .attr('selected', 'selected');
+
+
+              // Adding header to the year and Term dropdown list
+              dropdown_list.append('text')
+                           .attr('class', 'factors_dropdown_header')
+                           .text('Factor');
+
+
+              // Create an Update button
+              var update_button = dropdown_list.append('button')
+                                               .attr('id', 'update_button')
+                                               .attr('type', 'button')
+                                               .text('Update');
+
+
+            // Creating a Note for user to understand the visualization
+            var note = dropdown_list.append('div')
+                                        .attr('id', 'note')
+                                        .html('NOTE**<br/><br/>' + 
+                                              'Prosper Rating of a borrower depends upon the number of factors. And based upon the combination of Prosper Rating and values of the factors, a Borrower Rate is calculated for a borrower. Normally, higher the Prosper Rating, lower the Borrower Rate and vice-versa. Prosper rating and Borrower Rate are negatively correlated with each other. So, as Prosper Rating of a borrower increases, Borrower Rate for the borrower lowers down and vice-versa. Rating 1 is the lowest and Rating 7 is the best.<br/><br/>Prosper helps lends money to borrower for various tenure. In this visualization, relationships between Prosper Rating & factors is shown. There is a separate bar chart for each of the factor with respect to Prosper Rating.<br/><br/>Length of a bar represents average value of that factor for that particular Prosper rating. In each bar chart for a particular factor, you would see increase and decrease in the length of bars as we move from Rating 1 to Rating 7 denoting increase or decrease in the average value of that factor as we move from Rating 1 to Rating 7.<br/><br/>Below are the key take aways of this visualization which determines how each factor affect Prosper Rating - <br/><br/>1) Credit Score, Monthly Income, Revolving Credit Balance & Open Credit Lines are positively correlated with Prosper Rating, since as we move from Rating 1 to Rating 7, length of bars increases, i.e average value of factor increases.<br/><br/>2) Debt to Income Ratio & Inquiries Last 6 Months are negatively correlated with Prosper Rating, since as we move from Rating 1 to Rating 7, length of bars decreases, i.e average value of factor decreases.<br/><br/>3) People with Higher Rating would have high Credit Score, high Monthly Income, High Revolving Credit Balance, high number of Open Credit Lines, Low Debt to Income Ratio & Low number of Inquiries within Last 6 Months.<br/><br/>4) Similarly, people with Lower Rating would have lower Credit score, low Monthly Income, low Revolving Credit Balance, low number of Open Credit Lines, High Debt to Income Ratio & High number of Inquiries within Last 6 Months');
+
+
+              // Creating Onclick event
+              update_button.on('click', function() {
+                                        var selected_factor = document.getElementById('factors_dropdown').value;
+
+                                        if(selected_factor == 'Credit_Score') {
+                                            selected_factor = 'AverageCS';                                          
+                                        }
+                                        else if(selected_factor == 'Monthly_Income') {
+                                            selected_factor = 'AverageSMI';
+                                        }
+                                        else if(selected_factor == 'Revolving_Credit_Balance') {
+                                            selected_factor = 'AverageRCB';
+                                        }
+                                        else if(selected_factor == 'Open_Credit_Lines') {
+                                            selected_factor = 'AverageOCL';
+                                        }
+                                        else if(selected_factor == 'Debt_to_Income_Ratio') {
+                                            selected_factor = 'AverageDTI';
+                                        }
+                                        else if(selected_factor == 'Inquiries_Last_6_Months') {
+                                            selected_factor = 'AverageInquiries';
+                                        }
+
+                                        draw_bar(prosper_data, selected_factor);
+
+            }); 
+
+          }; 
+
+
+      },1500);
+
+   };
+  </script>
+</head>
+<body>
+  <script type="text/javascript">
+  /* Use D3 to load the tsv file */
+
+d3.tsv("bar_chart_prosper_selected_variables_outliers_removed.tsv", draw);
+  </script>
+</body>
+</html>
